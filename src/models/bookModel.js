@@ -36,14 +36,14 @@ let bookSchema = mongoose.Schema({
         type:String
       }},
     deletedAt: {
-      type: Date,
+      type: String,
     }, 
     isDeleted: {
       type: Boolean, 
       default: false
     },
     releasedAt: {
-      type: Date,
+      type: String,
        required: true, 
       
   
@@ -51,4 +51,4 @@ let bookSchema = mongoose.Schema({
 },
 {timestamps: true})
 
-  module.exports = mongoose.model("book",bookSchema)
+  module.exports = mongoose.model("Book",bookSchema)

@@ -1,14 +1,14 @@
 const { default: mongoose } = require("mongoose");
 const bookModel = require("../models/bookModel");
-const userModel = require("../models/userModel");
 
 
 let createBook = async function (req,res){
-    try{
+    // try{
         let data = req.body;
-
+        
         if(!data.title)
-        return res.status(400).send({ status: false, msg: "Not a valid title" })
+        
+        return res.status(400).send({ status: false, msg: "title is a required field" })
 
         const usedTitle = await bookModel.findOne({title:data.title})
 
@@ -46,15 +46,15 @@ if(!data.releasedAt)
 
 return res.status(400).send({status:false,msg:"released date is required"})
 
-        let saveData = await userModel.create(data);
+        let saveData = await bookModel.create(data);
         res.status(201).send({status:true,msg:saveData});
 
 
     }
 
-    catch (err){
-        return res.status(500).send({status:false,msg:err.msg})
-    }
-}
+//     catch (err){
+//         return res.status(500).send({status:false,msg:err.msg})
+//     }
+// }
 
 module.exports.createBook = createBook;
