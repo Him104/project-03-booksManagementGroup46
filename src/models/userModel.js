@@ -5,7 +5,7 @@ let userSchema = mongoose.Schema(
 { 
     title: {
         type: String,
-        required: true,
+        required: [true, "title is a required field"],
          enum:["Mr", "Mrs", "Miss"]
         },
     name: {
@@ -16,26 +16,12 @@ let userSchema = mongoose.Schema(
         type:String, 
         required:[true, "phone number is a required field"],
          unique:true,
-         trim:true,
-         validate: {
-            validator: function (str){
-             return  /\d{10}/.test(str)
-            },
-            message:props=>`${props.value} is not a valid phone number!`
-         }
-         },
+         trim:true},
     email: {
         type:String,
         required:[true, "email is a required field"],
         unique:true,
         lowercase:true,
-    validate:{
-        validator: function (str){
-            return /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/.test(str)
-        },
-        message:props=>`${props.value} is not a valid email !`
-
-    }
     }, 
     password: {
         type:String, 
@@ -55,4 +41,4 @@ let userSchema = mongoose.Schema(
     {timestamps:true}
   ) 
 
-  module.exports = mongoose.model("user-for-book",userSchema);
+  module.exports = mongoose.model("user",userSchema);

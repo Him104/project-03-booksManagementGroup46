@@ -22,7 +22,7 @@ const loginUser = async function (req, res) {
       },
       "him104"
     );
-    //res.setHeader("x-auth-token", token);
+    res.setHeader("x-auth-token", token);
     res.send({ status: true, data: token });
   };
 

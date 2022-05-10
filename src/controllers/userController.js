@@ -1,32 +1,57 @@
 const userModel = require("../models/userModel");
 
+let emailRegex = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/;
+
+let mobileRegex =  /\d{10}/;
 
 let createUser = async function (req,res){
     try{
         let data = req.body;
-        // if(!data.title)
+        if(!data.title)
 
-        // return res.status(400).send({status:false,msg:"title is a required field"})
+        return res.status(400).send({status:false,msg:"title is a required field"})
 
-        // if(!data.name)
+        if(!data.name)
 
-        // return res.status(400).send({status:false,msg:"name is a required field"})
+        return res.status(400).send({status:false,msg:"name is a required field"})
 
-        // if(!data.phone)
+        if(!data.phone)
 
-        // return res.status(400).send({status:false,msg:"phone# is a required field"})
+        return res.status(400).send({status:false,msg:"phone# is a required field"})
 
-        // if(!data.email)
+        if(!mobileRegex.test(data.phone))
 
-        // return res.status(400).send({status:false,msg:"email is a required field"})
+        return res.status(400).send({ status: false, msg: "Please provide valid phone#" })
 
-        // if(!data.password)
+        const usedphone = await userModel.findOne({phone:data.phone})
 
-        // return res.status(400).send({status:false,msg:"password is a required field"})
+        if(usedphone)
 
-        // if(!data.address)
+        return res.status(404).send({ status: false, msg: "Phone# already exists" })
 
-        // return res.status(400).send({status:false,msg:"address is a required field"})
+
+
+        if(!data.email)
+
+        return res.status(400).send({status:false,msg:"email is a required field"})
+
+        if(!emailRegex.test(data.email))
+
+        return res.status(400).send({ status: false, msg: "Please provide valid email" })
+
+        const usedEmail = await userModel.findOne({email:data.email})
+
+        if(usedEmail)
+
+        return res.status(404).send({ status: false, msg: "Email Id already exists" })
+
+        if(!data.password)
+
+        return res.status(400).send({status:false,msg:"password is a required field"})
+
+        if(!data.address)
+
+        return res.status(400).send({status:false,msg:"address is a required field"})
 
         let saveData = await userModel.create(data);
         res.status(201).send({status:true,msg:saveData});
@@ -34,7 +59,7 @@ let createUser = async function (req,res){
 
     }
     catch(err){
-        return res.status(500).send({status:false,msg:err.msg})
+        return res.status(500).send({status:false, msg:err.msg})
 
     }
 }
