@@ -14,7 +14,7 @@ let bookSchema = mongoose.Schema({
     userId: {
         type: objectId,
       required: true,
-       refs:"user",
+       refs:"User",
     },
 
     ISBN: {
@@ -25,10 +25,10 @@ let bookSchema = mongoose.Schema({
       type:String,
       required: true,
     },
-    subcategory: {
-      type:String,
-      required: true,
-    },
+    subcategory: [
+      {type:String},
+      {required: true}
+    ],
     reviews: {
       type: Number, 
       default: 0, 
@@ -36,11 +36,15 @@ let bookSchema = mongoose.Schema({
         type:String
       }},
     deletedAt: {
-      type: String,
+      type: Date
     }, 
     isDeleted: {
       type: Boolean, 
       default: false
+    },
+    reviews: {
+      type:Number, 
+      default: 0
     },
     releasedAt: {
       type: String,

@@ -1,8 +1,11 @@
 const userModel = require("../models/userModel");
 
+const reviewModel = require("../models/reviewModel")
 let emailRegex = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/;
 
 let mobileRegex =  /\d{10}/;
+
+let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/
 
 let createUser = async function (req,res){
     try{
@@ -48,6 +51,11 @@ let createUser = async function (req,res){
         if(!data.password)
 
         return res.status(400).send({status:false,msg:"password is a required field"})
+
+        if(!passwordRegex.test(data.password))
+
+        return res.status(400).send({ status: false, msg: "Password doesn't match the requirements" })
+
 
         if(!data.address)
 
