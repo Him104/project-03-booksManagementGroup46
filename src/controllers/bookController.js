@@ -91,7 +91,7 @@ const getBookbyId = async function (req,res){
 
             return res.status(404).send({ status: false, message: "No book found" })
 
-        return res.status(200).send({status: true, message: "Book ,list", data:findBook})
+        return res.status(200).send({status: true, message: "Book list", data:findBook})
 
     }
     catch (err) {
@@ -103,43 +103,43 @@ const getBookbyId = async function (req,res){
 // Update book
 const updateBook = async function (req, res) {
     try {
-       
-        let bookId = req.params._id
+    
+        let bookId = req.params.bookId
 
-        let uniqueBlogId = await bookModel.findOne({bookId })
-        if (!uniqueBlogId) {
-            return res.status(404).send({ status: false, message: "No book found" })
+        let findingBook = await bookModel.findOne({_id: bookId})
+        if (!findingBook) {
+            return res.status(400).send({ status: false, msg: "No book found" })
         }
 
-        if (uniqueBlogId.isDeleted == true) {
-            return res.status(400).send({ status: false, message: "Book is already deleted" })
+        if (findingBook.isDeleted == true) {
+            return res.status(400).send({ status: false, msg: "Book has already been deleted" })
         }
        
         let data = req.body
         const { title, excerpt, ISBN, releasedAt } = data
 
         
-        let uniqueTitle = await bookModel.findOne({ title: title })
-        if (uniqueTitle) {
-            return res.status(400).send({ status: false, message: "Title is already exist, try new title" })
+        let duplicateTitle = await bookModel.findOne({ title: data.title })
+        if (duplicateTitle) {
+            return res.status(400).send({ status: false, msg: "Title already exists, choose some different title" })
         }
 
        
-        let uniqueISBN = await bookModel.findOne({ ISBN: ISBN })
-        if (uniqueISBN) {
-            return res.status(400).send({ status: false, message: "ISBN is already exist, input new ISBN" })
+        let duplicateISBN = await bookModel.findOne({ ISBN: data.ISBN })
+        if (duplicateISBN) {
+            return res.status(400).send({ status: false, msg: "ISBN already exists, choose some different ISBN" })
         }
 
         
         let updateBook = await bookModel.findByIdAndUpdate({ _id: bookId },
-            { $set: { title: title, excerpt: excerpt, ISBN: ISBN, releasedAt: releasedAt } }, { new: true })
+            { $set: { title: data.title, excerpt: data.excerpt, ISBN: data.ISBN, releasedAt: releasedAt } }, { new: true })
 
-        res.status(200).send({ status: true, message: "Book has been updated successfully", updateBook })
+        res.status(200).send({ status: true, message: "Book updated", updateBook })
 
     }
     catch (err) {
-        console.log("This is the error :", err.message)
-        res.status(500).send({ msg: "Error", error: err.message })
+    
+        res.status(500).send({status:false, msg:err.msg })
     }
 }
 
@@ -147,33 +147,28 @@ const updateBook = async function (req, res) {
 
 const deletedBook = async function (req, res) {
     try {
-        // Taking data from prams
-        let bookId = req.params.bookId
         
-        if (!validator.isValidObjectId(bookId)) {
-            return res.status(404).send({ status: false, message: "Book id is not valid" })
-        }
-
+        let bookId = req.params.bookId
        
-        let uniqueBlogId = await bookModel.findOne({ _id: bookId })
-        if (!uniqueBlogId) {
+        let findingDeleted = await bookModel.findOne({ _id: bookId })
+        if (!findingDeleted) {
             return res.status(404).send({ status: false, message: "Book not found" })
         }
 
         
-        if (uniqueBlogId.isDeleted == true) {
+        if (findingDeleted.isDeleted == true) {
             return res.status(400).send({ status: false, message: "Book is already deleted" })
         }
 
         let deleteBook = await bookModel.findByIdAndUpdate({ _id: bookId },
             { $set: { isDeleted: true, deletedAt: new Date() } }, { new: true })
 
-        return res.status(200).send({ status: true, message: "Book has been deleted successfully" })
+        return res.status(200).send({ status: true, message: "Book deleted", data:deleteBook})
 
     }
     catch (err) {
-        console.log("This is the error :", err.message)
-        res.status(500).send({ msg: "Error", error: err.message })
+        
+        res.status(500).send({ status:false, msg:err.msg })
     }
 }
 
