@@ -107,29 +107,25 @@ const updateBook = async function (req, res) {
         let bookId = req.params.bookId
 
         let findingBook = await bookModel.findOne({_id: bookId})
-        if (!findingBook) {
+        if (!findingBook) 
             return res.status(400).send({ status: false, msg: "No book found" })
-        }
+        
 
-        if (findingBook.isDeleted == true) {
+        if (findingBook.isDeleted == true) 
             return res.status(400).send({ status: false, msg: "Book has already been deleted" })
-        }
+        
        
         let data = req.body
         const { title, excerpt, ISBN, releasedAt } = data
 
         
         let duplicateTitle = await bookModel.findOne({ title: data.title })
-        if (duplicateTitle) {
+        if (duplicateTitle) 
             return res.status(400).send({ status: false, msg: "Title already exists, choose some different title" })
-        }
-
-       
+        
         let duplicateISBN = await bookModel.findOne({ ISBN: data.ISBN })
-        if (duplicateISBN) {
+        if (duplicateISBN) 
             return res.status(400).send({ status: false, msg: "ISBN already exists, choose some different ISBN" })
-        }
-
         
         let updateBook = await bookModel.findByIdAndUpdate({ _id: bookId },
             { $set: { title: data.title, excerpt: data.excerpt, ISBN: data.ISBN, releasedAt: releasedAt } }, { new: true })
