@@ -1,7 +1,6 @@
 const userModel = require("../models/userModel")
 const jwt = require('jsonwebtoken')
 
-
 //login api
 
 const loginUser = async function (req, res) {
@@ -18,14 +17,11 @@ const loginUser = async function (req, res) {
     let token = jwt.sign(
       {
         userId: user._id.toString(),
-        project: "third-project",
       },
       "him104"
     );
-    res.setHeader("x-auth-token", token);
+    res.header("x-auth-token", token);
     res.send({ status: true, data: token });
   };
-
-
 
 module.exports.loginUser = loginUser;

@@ -1,65 +1,57 @@
 const jwt = require("jsonwebtoken");
 const bookModel = require("../models/bookModel")
 
-//authnetication
 
-const validateToken = function(req, res, next) {
+//authentication
+
+let validateToken = function(req, res, next) {
   try{
-    let token = req.headers["x-Auth-token"];
-    if (!token) token = req.headers["x-auth-token"];
+    let token = req.header["x-auth-token"];
+    
   
-    if (!token) return res.send({ status: false, msg: "token must be present" });
-  
+    if (!token)
+    { return res.status(400).send({ status: false, msg: "token must be present" });
+    }
     console.log(token);
     
     let decodedToken = jwt.verify(token, "him104");
     if (!decodedToken) {
       return res.send({ status: false, msg: "token is invalid" });
     }
+
     next()
 }
 catch (err){
-
   return res.status(500).send({msg: err.msg})
 }
-
 }
 
 //authorization
 
 const authorization = async function(req,res,next){
   try{
-  let tokenUserId = req.tokenUserId
-  let user = req.body.userId
-  let user2 = req.params.bookId
+  let token = req.headers["x-auth-token"];
+  let decodedToken = jwt.verify(token,"him104")
+  const bookId = req.params.bookId || req.query.bookId
 
-  let findingId = await bookModel.findById({_id:user2}).select({userId:1})
+  let book = await bookModel.findOne({_id:bookId})
 
-  let getUserId = findingId.userId.toString()
-
-  if(getUserId!=tokenUserId){
-    return res.status(400).send({status:false,msg:"login required"})
-  
-
-} 
-else if (user) {
-  
-  if (user != tokenUserId) {
-      return res.status(401).send({ msg: "User must login" })
+if(!book)
+{
+return res.status(400).send({status:false,msg: "data has been deleted or id is not correct"})
   }
-  
-}
+
+  if(decodedToken.userId != book.userId){
+    return res.status(400).send({status:false,msg:"You are not authorized"})
+  }
 
 next();
 }
-
 catch (err) {
 
-res.status(500).send({status:false,err:msg.err })
+res.status(500).send({status:false, msg:err.msg })
 }
 }
-
-
 
 module.exports.authorization= authorization;
 module.exports.validateToken = validateToken;

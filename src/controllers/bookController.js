@@ -47,13 +47,13 @@ if(!data.releasedAt)
 return res.status(400).send({status:false,msg:"released date is required"})
 
         let saveData = await bookModel.create(data);
-        res.status(201).send({status:true,msg:saveData});
+        res.status(201).send({status:true, msg:saveData});
 
 
     }
 
     catch (err){
-        return res.status(500).send({status:false,msg:err.msg})
+        return res.status(500).send({status:false, msg: err.msg})
     }
 }
 
