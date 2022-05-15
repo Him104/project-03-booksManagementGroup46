@@ -1,57 +1,50 @@
 const jwt = require("jsonwebtoken");
-const bookModel = require("../models/bookModel")
-
 
 //authentication
 
 let validateToken = function(req, res, next) {
   try{
-    let token = req.header["x-auth-token"];
+    let token = req.headers["x-auth-token"];
     
-  
     if (!token)
-    { return res.status(400).send({ status: false, msg: "token must be present" });
-    }
-    console.log(token);
+    return res.status(400).send({ status: false, msg: "token must be present" });
     
+    // authorization 
     let decodedToken = jwt.verify(token, "him104");
-    if (!decodedToken) {
-      return res.send({ status: false, msg: "token is invalid" });
-    }
+    req.user = decodedToken.id
 
-    next()
+    next();
 }
 catch (err){
   return res.status(500).send({msg: err.msg})
 }
 }
 
-//authorization
+// //authorization
 
-const authorization = async function(req,res,next){
-  try{
-  let token = req.headers["x-auth-token"];
-  let decodedToken = jwt.verify(token,"him104")
-  const bookId = req.params.bookId || req.query.bookId
+// const authorization = async function(req,res,next){
+//   try{
+  
+//     let token = req.headers["x-auth-token"]
+//     let decodedToken = jwt.verify(token,"him104")
+// let bookId = req.params.bookId;
 
-  let book = await bookModel.findOne({_id:bookId})
+//   let book = await bookModel.findById(bookId)
 
-if(!book)
-{
-return res.status(400).send({status:false,msg: "data has been deleted or id is not correct"})
-  }
+// if(!book)
 
-  if(decodedToken.userId != book.userId){
-    return res.status(400).send({status:false,msg:"You are not authorized"})
-  }
+// return res.status(400).send({status:false,msg:"no data with this id"})
 
-next();
-}
-catch (err) {
+//   if(decodedToken.userId != book.userId)
 
-res.status(500).send({status:false, msg:err.msg })
-}
-}
+//   return res.status(400).send({status:false,msg:"Unauthorize access"})
 
-module.exports.authorization= authorization;
+// next();
+// }
+// catch (err) {
+
+// res.status(500).send({status:false, msg:err.msg })
+// }
+// }
+
 module.exports.validateToken = validateToken;

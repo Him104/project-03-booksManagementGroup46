@@ -1,6 +1,7 @@
 
 const mongoose = require('mongoose')
 const objectId = mongoose.Schema.Types.ObjectId;
+
 let reviewSchema = mongoose.Schema({
     bookId:{
         type: objectId,
@@ -11,13 +12,14 @@ let reviewSchema = mongoose.Schema({
         type:String,
         required: true,
         default: "Guest",
-        value: "reviewers Name"
+    
     },
 
     reviewedAt:
     {
         type: Date,
-        required:true
+        required:true,
+        default:Date.now()
     },
     rating:{
         type:Number,
@@ -39,4 +41,4 @@ let reviewSchema = mongoose.Schema({
 
 },
 {timestamps:true})
-module.exports= mongoose.model("Review",reviewSchema)
+module.exports= mongoose.model("review",reviewSchema)

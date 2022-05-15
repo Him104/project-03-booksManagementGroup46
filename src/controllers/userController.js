@@ -1,6 +1,6 @@
 const userModel = require("../models/userModel");
-
 const reviewModel = require("../models/reviewModel")
+
 let emailRegex = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/;
 
 let mobileRegex =  /\d{10}/;

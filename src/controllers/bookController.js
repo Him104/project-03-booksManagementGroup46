@@ -46,6 +46,7 @@ if(!data.releasedAt)
 
 return res.status(400).send({status:false,msg:"released date is required"})
 
+
         let saveData = await bookModel.create(data);
         res.status(201).send({status:true, msg:saveData});
 
@@ -103,39 +104,45 @@ const getBookbyId = async function (req,res){
 // Update book
 const updateBook = async function (req, res) {
     try {
-    
         let bookId = req.params.bookId
+        let data = req.body;
+//         let token = req.headers["x-auth-token"];
+//   let decodedToken = jwt.verify(token,"him104")
+//   const bookId = req.params.bookId || req.query.bookId
 
         let findingBook = await bookModel.findOne({_id: bookId})
+        if(req.data.userId !== findingBook.userId)
+        {
+            return res.status(400).send({ status: false, message:"you are not authorized"})
+        }
+
         if (!findingBook) 
-            return res.status(400).send({ status: false, msg: "No book found" })
-        
+            return res.status(400).send({ status: false, message: "No book found" })
 
         if (findingBook.isDeleted == true) 
-            return res.status(400).send({ status: false, msg: "Book has already been deleted" })
-        
-       
-        let data = req.body
-        const { title, excerpt, ISBN, releasedAt } = data
+            return res.status(400).send({ status: false, message: "Book has already been deleted" })
 
+    
         
         let duplicateTitle = await bookModel.findOne({ title: data.title })
         if (duplicateTitle) 
-            return res.status(400).send({ status: false, msg: "Title already exists, choose some different title" })
+            return res.status(400).send({ status: false, message: "Title already exists, choose some different title" })
         
         let duplicateISBN = await bookModel.findOne({ ISBN: data.ISBN })
         if (duplicateISBN) 
-            return res.status(400).send({ status: false, msg: "ISBN already exists, choose some different ISBN" })
+            return res.status(400).send({ status: false, message: "ISBN already exists, choose some different ISBN" })
         
         let updateBook = await bookModel.findByIdAndUpdate({ _id: bookId },
-            { $set: { title: data.title, excerpt: data.excerpt, ISBN: data.ISBN, releasedAt: releasedAt } }, { new: true })
+            { $set: { title: data.title, excerpt: data.excerpt, ISBN: data.ISBN, releasedAt: data.releasedAt } }, { new: true })
 
-        res.status(200).send({ status: true, message: "Book updated", updateBook })
+
+
+        res.status(200).send({ status: true, message: "Book updated", data: updateBook })
 
     }
     catch (err) {
     
-        res.status(500).send({status:false, msg:err.msg })
+        res.status(500).send({status:false, message:err.message })
     }
 }
 
