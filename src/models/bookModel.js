@@ -29,6 +29,10 @@ let bookSchema = mongoose.Schema({
       {type:String},
       {required: true}
     ],
+bookCover:{
+  type:String
+},
+
     reviews: {
       type: Number, 
       default: 0, 
